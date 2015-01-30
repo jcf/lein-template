@@ -1,14 +1,28 @@
-# jcf
+# REPL-driven Leiningen template
 
-A Leiningen template for FIXME.
+A Leiningen template I use for quickly creating a reloadable, REPL-driven
+Clojure app.
+
+### Features
+
+- Stuart Sierra's Component
+- reloaded.repl
+- constraint-config
+- environ for 12factor
+- Uberjar ready for easy deployment
+
+## Installation
+
+Install via Clojars.
 
 ## Usage
 
-FIXME
+``` sh
+lein new jcf example
+```
 
 ## License
 
-Copyright © 2015 FIXME
+Copyright © 2015 James Conroy-Finn
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the MIT License.
