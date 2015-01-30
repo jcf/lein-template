@@ -13,7 +13,7 @@ Clojure app.
 
 ## Installation
 
-Install via Clojars.
+[![Clojars Project](http://clojars.org/jcf/lein-template/latest-version.svg)](http://clojars.org/jcf/lein-template)
 
 ## Usage
 
