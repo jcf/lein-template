@@ -6,4 +6,5 @@
   :deploy-repositories [["releases" :clojars]]
   :eval-in-leiningen true
   :profiles {:dev {:dependencies [[leiningen "2.5.1"]
-                                  [me.raynes/fs "1.4.6"]]}})
+                                  [me.raynes/fs "1.4.6"]
+                                  [org.clojure/clojure "1.6.0"]]}})
