@@ -1,4 +1,4 @@
-(defproject jcf/lein-template "0.1.1"
+(defproject jcf/lein-template "0.2.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "https://github.com/jcf/lein-template"
   :license {:name "The MIT License"
