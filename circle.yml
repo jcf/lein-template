@@ -1,0 +1,7 @@
+dependencies:
+  cache_directories:
+    - '~/.m2'
+
+test:
+  override:
+    - lein test # we don't trampoline with `:eval-in-leiningen`
