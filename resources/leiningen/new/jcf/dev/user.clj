@@ -7,7 +7,7 @@
             [clojure.string :as str]
             [clojure.test :as test]
             [environ.core :refer [env]]
-            [reloaded.repl :refer [go init reset start system]]
+            [reloaded.repl :refer [go init reset start stop system]]
             [{{ns}}.config :refer [config-map]]
             [{{ns}}.system :refer [new-system]]))
 
