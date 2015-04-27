@@ -3,6 +3,8 @@
 A Leiningen template I use for quickly creating a reloadable, REPL-driven
 Clojure app.
 
+[![Circle CI](https://circleci.com/gh/jcf/lein-template.svg?style=svg)](https://circleci.com/gh/jcf/lein-template)
+
 ### Features
 
 - Stuart Sierra's Component
