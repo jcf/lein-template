@@ -1,12 +1,10 @@
 (ns leiningen.new.jcf
   (:require [leiningen.core.main :as main]
-            [leiningen.new.templates :refer [->files
-                                             name-to-path
-                                             project-name
-                                             renderer
-                                             sanitize-ns]]))
+            [leiningen.new.templates :as tmpl]
+            [schema.core :as s]))
 
-(def render (renderer "jcf"))
+(def ^:private render
+  (tmpl/renderer "jcf"))
 
 (def clojurish-templates
   "All templates, with the exception of `gitignore` which needs to be 'hidden'
@@ -19,32 +17,36 @@
    "system.properties"
    "test/jcf/config_test.clj"])
 
-(defn- expand-paths
+(def ^:private Templates
+  {s/Str s/Str})
+
+(s/defn ^:private expand-paths :- Templates
   "Take a list of template paths, and expand them into a map of destination
   mapped to template path.
 
   Any instance of `jcf` in the template path will be replaced with
   `{{path}}`."
-  [paths]
+  [paths :- [s/Str]]
   (->> paths
        (map (juxt #(.replace % "jcf" "{{path}}") identity))
        (into {})))
 
-(defn- get-manifest [paths]
+(s/defn get-manifest :- Templates
+  [paths :- [s/Str]]
   (assoc (expand-paths paths) ".gitignore" "gitignore"))
 
-(defn- render-files
+(s/defn render-files :- Templates
   "Given a list of destinations and template paths, maps over the template paths
   and renders each file using the `jcf` renderer."
-  [files data]
+  [files :- Templates data :- {s/Keyword s/Str}]
   (reduce-kv #(assoc %1 %2 (render %3 data)) {} files))
 
-(defn jcf
-  [name]
+(s/defn jcf
+  [name :- s/Str]
   (let [data {:name name
-              :ns (sanitize-ns name)
-              :path (name-to-path name)
-              :project-name (project-name name)}
+              :ns (tmpl/sanitize-ns name)
+              :path (tmpl/name-to-path name)
+              :project-name (tmpl/project-name name)}
         files (get-manifest clojurish-templates)]
     (main/info (format "Generating %d files..." (count files)))
-    (apply ->files data (render-files files data))))
+    (apply tmpl/->files data (render-files files data))))
