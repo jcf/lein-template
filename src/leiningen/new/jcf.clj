@@ -28,7 +28,7 @@
   `{{path}}`."
   [paths :- [s/Str]]
   (->> paths
-       (map (juxt #(.replace % "jcf" "{{path}}") identity))
+       (map (juxt #(.replace ^String % "jcf" "{{path}}") identity))
        (into {})))
 
 (s/defn get-manifest :- Templates
