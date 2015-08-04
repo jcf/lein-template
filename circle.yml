@@ -4,4 +4,4 @@ dependencies:
 
 test:
   override:
-    - lein test # we don't trampoline with `:eval-in-leiningen`
+    - bin/ci
