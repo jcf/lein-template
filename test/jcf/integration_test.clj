@@ -9,7 +9,7 @@
 
 (defn generate-project [test-fn]
   (let [app-name "example"
-        sandbox (temp-dir "jcf-")]
+        sandbox ^java.io.File (temp-dir "jcf-")]
     (binding [*dir* (str sandbox "/" app-name)]
       (println (format "Generating project in %s..." *dir*))
       (jcf app-name)

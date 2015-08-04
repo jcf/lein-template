@@ -7,5 +7,5 @@
   :eval-in-leiningen true
   :profiles {:dev {:dependencies [[leiningen "2.5.1"]
                                   [me.raynes/fs "1.4.6"]
-                                  [org.clojure/clojure "1.6.0"]
+                                  [org.clojure/clojure "1.7.0"]
                                   [prismatic/schema "0.4.3"]]}})

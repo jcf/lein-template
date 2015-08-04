@@ -1,25 +1,16 @@
 (ns {{ns}}.config
-  (:import [clojure.lang Keyword])
-  (:require [constraint.config :as conf]
-            [constraint.core :as constraint :refer [?]]
-            [environ.core :refer [env]]))
+  (:require [environ.core :refer [env]]
+            [schema.core :as s]
+            [schema.coerce :as coerce]))
 
 (def ^:private defaults
-  {:log-level :debug
-   :port 3000})
+  {:port 3000})
 
-(def ^:private definition
-  {:log-level Keyword
-   :port Long
-   :user String})
+(def ^:private Config
+  {:port s/Int})
 
-(defn- read-key [k]
-  (if (constraint/optional? k) (.constraint k) k))
-
-(defn config-map
+(s/defn config-map :- Config
   ([] (config-map env))
   ([m]
-   (let [keys-in-definition (map read-key (keys definition))
-         config (->> (select-keys m keys-in-definition)
-                     (merge defaults))]
-     (conf/verify-config definition config))))
+   ((coerce/coercer Config coerce/string-coercion-matcher)
+    (merge defaults (select-keys m (keys Config))))))
