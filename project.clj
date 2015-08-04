@@ -1,4 +1,4 @@
-(defproject jcf/lein-template "0.3.1-SNAPSHOT"
+(defproject jcf/lein-template "0.3.1"
   :description "A Leiningen template I use for quickly creating a reloadable, REPL-driven Clojure app."
   :url "https://github.com/jcf/lein-template"
   :license {:name "The MIT License"
