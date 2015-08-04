@@ -4,7 +4,7 @@
   :dependencies [[com.stuartsierra/component "0.2.2"]
                  [environ "1.0.0"]
                  [listora/constraint-config "0.2.0"]
-                 [org.clojure/clojure "1.6.0"]]
+                 [org.clojure/clojure "1.7.0"]]
   :min-lein-version "2.5.0"
   :uberjar-name "{{project-name}}-standalone.jar"
   :profiles
