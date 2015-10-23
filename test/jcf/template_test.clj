@@ -30,6 +30,7 @@
         props (apply hash-map kvs)]
     (is (= named 'example/app))
     (is (= version "0.1.0-SNAPSHOT"))
+    (is (= (:uberjar-name props) "example-app-standalone.jar"))
     (is (= (:dependencies props)
            '[[com.stuartsierra/component "0.2.2"]
              [environ "1.0.0"]
