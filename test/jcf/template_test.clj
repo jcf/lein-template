@@ -33,6 +33,5 @@
     (is (= (:dependencies props)
            '[[com.stuartsierra/component "0.2.2"]
              [environ "1.0.0"]
-             [listora/constraint-config "0.2.0"]
              [org.clojure/clojure "1.7.0"]
              [prismatic/schema "0.4.3"]]))))
