@@ -1,17 +1,13 @@
-# REPL-driven Leiningen template
+# REPL-driven Leiningen template [![Circle CI](https://circleci.com/gh/jcf/lein-template.svg?style=svg)](https://circleci.com/gh/jcf/lein-template)
 
 A Leiningen template I use for quickly creating a reloadable, REPL-driven
-Clojure app.
-
-[![Circle CI](https://circleci.com/gh/jcf/lein-template.svg?style=svg)](https://circleci.com/gh/jcf/lein-template)
-
-### Features
+Clojure app with the following features:
 
 - Stuart Sierra's Component
 - reloaded.repl
-- constraint-config
-- environ for 12factor
+- environ for configuration
 - Uberjar ready for easy deployment
+- Prismtic's Schema
 
 ## Installation
 
