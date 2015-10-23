@@ -1,7 +1,12 @@
 (ns leiningen.new.jcf
-  (:require [leiningen.core.main :as main]
+  (:require [clojure.string :as str]
+            [leiningen.core.main :as main]
             [leiningen.new.templates :as tmpl]
             [schema.core :as s]))
+
+(defn- hyphenated-name
+  [s]
+  (str/replace s #"/" "-"))
 
 (def ^:private render
   (tmpl/renderer "jcf"))
@@ -41,12 +46,17 @@
   [files :- Templates data :- {s/Keyword s/Str}]
   (reduce-kv #(assoc %1 %2 (render %3 data)) {} files))
 
+(defn name->data
+  [named]
+  {:hyphenated-name (hyphenated-name named)
+   :name named
+   :ns (tmpl/sanitize-ns named)
+   :path (tmpl/name-to-path named)
+   :project-name (tmpl/project-name named)})
+
 (s/defn jcf
-  [name :- s/Str]
-  (let [data {:name name
-              :ns (tmpl/sanitize-ns name)
-              :path (tmpl/name-to-path name)
-              :project-name (tmpl/project-name name)}
+  [named :- s/Str]
+  (let [data (name->data named)
         files (get-manifest clojurish-templates)]
     (main/info (format "Generating %d files..." (count files)))
     (apply tmpl/->files data (render-files files data))))

@@ -20,7 +20,38 @@
                 {:name "example/app"
                  :ns "example.app"
                  :path "example/app"
-                 :project-name "app"}))
+                 :project-name "app"
+                 :hyphenated-name "example-app"}))
+
+(deftest test-name->data
+  (are [in out] (= (name->data in) out)
+    "foo"
+    {:hyphenated-name "foo"
+     :name "foo"
+     :ns "foo"
+     :path "foo"
+     :project-name "foo"}
+
+    "foo.app"
+    {:hyphenated-name "foo.app"
+     :name "foo.app"
+     :ns "foo.app"
+     :path "foo/app"
+     :project-name "foo.app"}
+
+    "foo/app"
+    {:hyphenated-name "foo-app"
+     :name "foo/app"
+     :ns "foo.app"
+     :path "foo/app"
+     :project-name "app"}
+
+    "foo/bar/app"
+    {:hyphenated-name "foo-bar-app"
+     :name "foo/bar/app"
+     :ns "foo.bar.app"
+     :path "foo/bar/app"
+     :project-name "app"}))
 
 (deftest test-render-files
   (is (= (-> manifest keys sort) expected-manifest)))
