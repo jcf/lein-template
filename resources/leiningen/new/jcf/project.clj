@@ -5,6 +5,7 @@
                  [environ "1.0.0"]
                  [org.clojure/clojure "1.7.0"]
                  [prismatic/schema "0.4.3"]]
+  :main {{ns}}.main
   :min-lein-version "2.5.0"
   :uberjar-name "{{hyphenated-name}}-standalone.jar"
   :profiles
@@ -12,5 +13,4 @@
                         [reloaded.repl "0.1.0"]]
          :source-paths ["dev"]}
    :uberjar {:aot :all
-             :main {{ns}}.main
              :omit-source true}})
