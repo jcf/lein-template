@@ -62,7 +62,10 @@
     (is (= version "0.1.0-SNAPSHOT"))
     (is (= (:uberjar-name props) "example-app-standalone.jar"))
     (is (= (:dependencies props)
-           '[[com.stuartsierra/component "0.2.2"]
-             [environ "1.0.0"]
+           '[[com.stuartsierra/component "0.3.0"]
+             [environ "1.0.1"]
              [org.clojure/clojure "1.7.0"]
-             [prismatic/schema "0.4.3"]]))))
+             [prismatic/schema "1.0.1"]]))
+    (is (= (get-in props [:profiles :dev :dependencies])
+           '[[org.clojure/tools.namespace "0.2.10"]
+             [reloaded.repl "0.2.1"]]))))
