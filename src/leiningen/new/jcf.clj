@@ -18,7 +18,6 @@
    "project.clj"
    "src/jcf/config.clj"
    "src/jcf/main.clj"
-   "src/jcf/system.clj"
    "system.properties"
    "test/jcf/config_test.clj"])
 
