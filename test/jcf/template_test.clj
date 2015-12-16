@@ -11,7 +11,6 @@
    "project.clj"
    "src/{{path}}/config.clj"
    "src/{{path}}/main.clj"
-   "src/{{path}}/system.clj"
    "system.properties"
    "test/{{path}}/config_test.clj"])
 
