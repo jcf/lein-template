@@ -7,6 +7,7 @@
                  [prismatic/schema "1.0.1"]]
   :main {{ns}}.main
   :min-lein-version "2.5.0"
+  :repl-options {:init-ns user}
   :uberjar-name "{{hyphenated-name}}-standalone.jar"
   :profiles
   {:dev {:dependencies [[org.clojure/tools.namespace "0.2.10"]
