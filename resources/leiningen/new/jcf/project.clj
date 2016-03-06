@@ -1,10 +1,10 @@
 (defproject {{name}} "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "https://example.com/FIXME"
-  :dependencies [[com.stuartsierra/component "0.3.0"]
-                 [environ "1.0.1"]
-                 [org.clojure/clojure "1.7.0"]
-                 [prismatic/schema "1.0.1"]]
+  :dependencies [[com.stuartsierra/component "0.3.1"]
+                 [environ "1.0.2"]
+                 [org.clojure/clojure "1.8.0"]
+                 [prismatic/schema "1.0.5"]]
   :main {{ns}}.main
   :min-lein-version "2.5.0"
   :repl-options {:init-ns user}

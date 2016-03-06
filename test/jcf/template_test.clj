@@ -63,10 +63,10 @@
     (is (= (:repl-options props) '{:init-ns user}))
     (is (= (:uberjar-name props) "example-app-standalone.jar"))
     (is (= (:dependencies props)
-           '[[com.stuartsierra/component "0.3.0"]
-             [environ "1.0.1"]
-             [org.clojure/clojure "1.7.0"]
-             [prismatic/schema "1.0.1"]]))
+           '[[com.stuartsierra/component "0.3.1"]
+             [environ "1.0.2"]
+             [org.clojure/clojure "1.8.0"]
+             [prismatic/schema "1.0.5"]]))
     (is (= (get-in props [:profiles :dev :dependencies])
            '[[org.clojure/tools.namespace "0.2.10"]
              [reloaded.repl "0.2.1"]]))))
