@@ -1,10 +1,9 @@
 (ns jcf.integration-test
-  (:require [clojure.java.io :as io]
-            [clojure.java.shell :refer [sh]]
-            [clojure.string :as str]
+  (:require [clojure.java.shell :refer [sh]]
             [clojure.test :refer :all]
-            [leiningen.new.jcf :refer :all]
-            [leiningen.new.templates :refer [*dir*]]
+            [leiningen.new
+             [jcf :refer :all]
+             [templates :refer [*dir*]]]
             [me.raynes.fs :refer [temp-dir]]))
 
 (defn generate-project [test-fn]

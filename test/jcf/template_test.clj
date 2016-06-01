@@ -1,6 +1,6 @@
 (ns jcf.template-test
   (:require [clojure.test :refer :all]
-            [leiningen.new.jcf :refer :all]))
+            [leiningen.new.jcf :as sut]))
 
 (def ^:private expected-manifest
   [".gitignore"
@@ -12,15 +12,15 @@
    "test/{{path}}/config_test.clj"])
 
 (def manifest
-  (render-files (get-manifest clojurish-templates)
-                {:name "example/app"
-                 :ns "example.app"
-                 :path "example/app"
-                 :project-name "app"
-                 :hyphenated-name "example-app"}))
+  (sut/render-files (sut/get-manifest sut/clojurish-templates)
+                    {:name "example/app"
+                     :ns "example.app"
+                     :path "example/app"
+                     :project-name "app"
+                     :hyphenated-name "example-app"}))
 
 (deftest test-name->data
-  (are [in out] (= (name->data in) out)
+  (are [in out] (= (sut/name->data in) out)
     "foo"
     {:hyphenated-name "foo"
      :name "foo"
