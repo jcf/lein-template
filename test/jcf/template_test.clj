@@ -1,9 +1,6 @@
 (ns jcf.template-test
   (:require [clojure.test :refer :all]
-            [leiningen.new.jcf :refer :all]
-            [schema.test :refer [validate-schemas]]))
-
-(use-fixtures :once validate-schemas)
+            [leiningen.new.jcf :refer :all]))
 
 (def ^:private expected-manifest
   [".gitignore"

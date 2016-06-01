@@ -1,8 +1,7 @@
 (ns leiningen.new.jcf
   (:require [clojure.string :as str]
             [leiningen.core.main :as main]
-            [leiningen.new.templates :as tmpl]
-            [schema.core :as s]))
+            [leiningen.new.templates :as tmpl]))
 
 (defn- hyphenated-name
   [s]
@@ -21,28 +20,25 @@
    "system.properties"
    "test/jcf/config_test.clj"])
 
-(def ^:private Templates
-  {s/Str s/Str})
-
-(s/defn ^:private expand-paths :- Templates
+(defn- expand-paths
   "Take a list of template paths, and expand them into a map of destination
   mapped to template path.
 
   Any instance of `jcf` in the template path will be replaced with
   `{{path}}`."
-  [paths :- [s/Str]]
+  [paths]
   (->> paths
        (map (juxt #(.replace ^String % "jcf" "{{path}}") identity))
        (into {})))
 
-(s/defn get-manifest :- Templates
-  [paths :- [s/Str]]
+(defn get-manifest
+  [paths]
   (assoc (expand-paths paths) ".gitignore" "gitignore"))
 
-(s/defn render-files :- Templates
+(defn render-files
   "Given a list of destinations and template paths, maps over the template paths
   and renders each file using the `jcf` renderer."
-  [files :- Templates data :- {s/Keyword s/Str}]
+  [files data]
   (reduce-kv #(assoc %1 %2 (render %3 data)) {} files))
 
 (defn name->data
@@ -53,8 +49,8 @@
    :path (tmpl/name-to-path named)
    :project-name (tmpl/project-name named)})
 
-(s/defn jcf
-  [named :- s/Str]
+(defn jcf
+  [named]
   (let [data (name->data named)
         files (get-manifest clojurish-templates)]
     (main/info (format "Generating %d files..." (count files)))
