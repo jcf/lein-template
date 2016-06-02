@@ -1,11 +1,15 @@
 (ns {{ns}}.common-test
   (:require byte-streams
-          [clojure.test :refer :all]
-          [clojure.test.check
-           [clojure-test :refer [defspec]]
-           [generators :as gen]
-           [properties :as prop]]
-          [{{ns}}.common :as sut]))
+            [clojure
+             [spec :as s]
+             [test :refer :all]]
+            [clojure.test.check
+             [clojure-test :refer [defspec]]
+             [generators :as gen]
+             [properties :as prop]]
+            [{{ns}}.common :as sut]))
+
+(use-fixtures :once (fn [f] (s/instrument-all) (f)))
 
 ;; -----------------------------------------------------------------------------
 ;; ByteArrayInputStream
@@ -24,7 +28,9 @@
     identity {}     {}
     identity {:a 1} {:a 1}
 
-    (fn [[k ^long v]] [(name k) (if (number? v) (inc v) v)])
+    (fn [[k v]]
+      [(if (sut/inflectable? k) (name k) k)
+       (if (number? v) (inc ^long v) v)])
     {:a 1 :b {:c 2 :d {:e 3}}}
     {"a" 2 "b" {"c" 3 "d" {"e" 4}}}))
 
