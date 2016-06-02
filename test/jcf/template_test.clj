@@ -2,14 +2,37 @@
   (:require [clojure.test :refer :all]
             [leiningen.new.jcf :as sut]))
 
+;; -----------------------------------------------------------------------------
+;; Utils
+
+(defmacro ^:private is-ordered
+  "Naive ordered check that is extremely inefficient, but that supports
+  comparing any sortable."
+  [coll]
+  `(is (= ~coll (sort ~coll))))
+
+(defn- dep-name
+  [dep]
+  (-> dep first str))
+
+;; -----------------------------------------------------------------------------
+;; Fixtures
+
 (def ^:private expected-manifest
   [".gitignore"
    "dev/user.clj"
    "project.clj"
-   "src/{{path}}/config.clj"
+   "resources/config.edn"
+   "src/{{path}}/common.clj"
+   "src/{{path}}/http_client.clj"
+   "src/{{path}}/logger.clj"
    "src/{{path}}/main.clj"
+   "src/{{path}}/mime.clj"
    "system.properties"
-   "test/{{path}}/config_test.clj"])
+   "test/{{path}}/common_test.clj"
+   "test/{{path}}/http_client_test.clj"
+   "test/{{path}}/mime_test.clj"
+   "test/{{path}}/test/util.clj"])
 
 (def manifest
   (sut/render-files (sut/get-manifest sut/clojurish-templates)
@@ -18,6 +41,9 @@
                      :path "example/app"
                      :project-name "app"
                      :hyphenated-name "example-app"}))
+
+;; -----------------------------------------------------------------------------
+;; Tests
 
 (deftest test-name->data
   (are [in out] (= (sut/name->data in) out)
@@ -59,11 +85,5 @@
     (is (= version "0.1.0-SNAPSHOT"))
     (is (= (:repl-options props) '{:init-ns user}))
     (is (= (:uberjar-name props) "example-app-standalone.jar"))
-    (is (= (:dependencies props)
-           '[[com.stuartsierra/component "0.3.1"]
-             [environ "1.0.2"]
-             [org.clojure/clojure "1.8.0"]
-             [prismatic/schema "1.0.5"]]))
-    (is (= (get-in props [:profiles :dev :dependencies])
-           '[[org.clojure/tools.namespace "0.2.10"]
-             [reloaded.repl "0.2.1"]]))))
+    (is-ordered (map dep-name (:dependencies props)))
+    (is-ordered (map dep-name (get-in props [:profiles :dev :dependencies])))))

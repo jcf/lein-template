@@ -1,0 +1,12 @@
+{:http
+ {:connection-timeout 2000
+  :pool-timeout 1000
+  :request-timeout 1000}
+
+ :logger
+ {:level #profile {:default :debug :uberjar :debug}
+  :path #profile {:default "logs/dev.log"
+                  :test "logs/test.log"
+                  :uberjar nil}}
+ :stdout? #profile {:default false :uberjar true}
+ :timestamp-format "yyyy-MM-dd HH:mm:ss"}

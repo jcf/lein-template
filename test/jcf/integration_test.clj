@@ -4,11 +4,14 @@
             [leiningen.new
              [jcf :refer :all]
              [templates :refer [*dir*]]]
-            [me.raynes.fs :refer [temp-dir]]))
+            [me.raynes.fs :refer [temp-dir]]
+            [clojure.string :as str]))
+
+(def ^:private app-name
+  "example")
 
 (defn generate-project [test-fn]
-  (let [app-name "example"
-        sandbox ^java.io.File (temp-dir "jcf-")]
+  (let [sandbox ^java.io.File (temp-dir "jcf-")]
     (binding [*dir* (str sandbox "/" app-name)]
       (println (format "Generating project in %s..." *dir*))
       (jcf app-name)
@@ -24,6 +27,13 @@
 (deftest test-lein-test
   (let [_ (println "Running lein test. This'll take a couple of seconds...")
         {:keys [exit out err]} (sh "lein" "test" :dir *dir*)]
-    (is (zero? exit)
-        (format "lein test failed with status %d.\nOut:\n%s\n\nErr:\n%s\n\n"
-                exit out err))))
+    (when (is (zero? exit)
+              (str "lein test failed with status " exit ".\n\n"
+                   "Dir: " *dir* "\n\n"
+                   "Out:\n" out "\n\n"
+                   "Err:\n" err "\n"))
+      (let [our-errors (->> err
+                            str/split-lines
+                            (filter #(re-find (re-pattern app-name) %)))]
+        (is (empty? our-errors)
+            (str "Warnings featuring \"" app-name "\" found in stdout"))))))

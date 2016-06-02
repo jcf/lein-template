@@ -28,10 +28,17 @@
   from git."
   #{"dev/user.clj"
     "project.clj"
-    "src/jcf/config.clj"
+    "resources/config.edn"
+    "src/jcf/common.clj"
+    "src/jcf/http_client.clj"
+    "src/jcf/logger.clj"
     "src/jcf/main.clj"
+    "src/jcf/mime.clj"
     "system.properties"
-    "test/jcf/config_test.clj"})
+    "test/jcf/mime_test.clj"
+    "test/jcf/common_test.clj"
+    "test/jcf/http_client_test.clj"
+    "test/jcf/test/util.clj"})
 
 (defn- hyphenated-name
   [s]
@@ -68,7 +75,7 @@
   :args (s/cat :paths ::templates)
   :ret ::template-map)
 
-;; NOTE Do not spec `jcf`.
+;; NOTE Do not spec `render-files`.
 ;;
 ;; Doing so will result in fake template paths that don't exist, and when
 ;; Leiningen encounters them it kills the REPL.
@@ -100,4 +107,5 @@
   (let [data (name->data named)
         files (get-manifest clojurish-templates)]
     (main/info (format "Generating %d files..." (count files)))
+    (main/info (str/join "\n" (sort (keys files))))
     (apply tmpl/->files data (render-files files data))))
