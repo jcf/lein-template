@@ -4,7 +4,7 @@
             [leiningen.new
              [jcf :refer :all]
              [templates :refer [*dir*]]]
-            [me.raynes.fs :refer [temp-dir]]
+            [me.raynes.fs :as fs :refer [temp-dir]]
             [clojure.string :as str]))
 
 (def ^:private app-name
@@ -20,7 +20,7 @@
         (finally
           (when (.isDirectory sandbox)
             (println (format "Deleting project in %s..." *dir*))
-            (.delete sandbox)))))))
+            (fs/delete-dir sandbox)))))))
 
 (use-fixtures :once generate-project)
 
