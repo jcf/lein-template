@@ -2,9 +2,7 @@
 set -e
 
 stage() {
-  echo
-  echo -e "\033[34;1m=>\033[0m $@"
-  echo
+  printf "\033[34;1m==>\033[0;1m %s\033[0m\n" "$@"
 }
 
 export TEMPLATE_DIR="/tmp/jcf-$(date -u +"%Y%m%d%H%M%S" | tr -d "\n")"
