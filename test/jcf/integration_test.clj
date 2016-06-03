@@ -28,10 +28,13 @@
   (let [_ (println "Running lein test. This'll take a couple of seconds...")
         {:keys [exit out err]} (sh "lein" "test" :dir *dir*)]
     (when (is (zero? exit)
-              (str "lein test failed with status " exit ".\n\n"
-                   "Dir: " *dir* "\n\n"
-                   "Out:\n" out "\n\n"
-                   "Err:\n" err "\n"))
+              (str/join
+               "\n\n"
+               (filter identity
+                       [(str "lein test failed with status " exit ".")
+                        (str "Dir: " *dir*)
+                        (when err (str "Err:\n" err))
+                        (when out (str "Out:\n" out))])))
       (let [our-errors (->> err
                             str/split-lines
                             (filter #(re-find (re-pattern app-name) %)))]
