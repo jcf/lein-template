@@ -1,6 +1,6 @@
 (ns leiningen.new.jcf
   (:require [clojure
-             [spec :as s]
+             ;; [spec :as s]
              [string :as str]]
             [leiningen.core.main :as main]
             [leiningen.new.templates :as tmpl]))
@@ -8,17 +8,17 @@
 ;; -----------------------------------------------------------------------------
 ;; Specs
 
-(s/def ::template-path string?)
-(s/def ::templates (s/coll-of ::template-path #{}))
-(s/def ::template-map (s/map-of ::template-path string?))
+;; (s/def ::template-path string?)
+;; (s/def ::templates (s/coll-of ::template-path #{}))
+;; (s/def ::template-map (s/map-of ::template-path string?))
 
-(s/def ::hyphenated-name (s/and string? #(not (str/includes? % "/"))))
-(s/def ::name string?)
-(s/def ::ns string?)
-(s/def ::path string?)
-(s/def ::project-name string?)
-(s/def ::template-data
-  (s/keys :req-un [::hyphenated-name ::name ::ns ::path ::project-name]))
+;; (s/def ::hyphenated-name (s/and string? #(not (str/includes? % "/"))))
+;; (s/def ::name string?)
+;; (s/def ::ns string?)
+;; (s/def ::path string?)
+;; (s/def ::project-name string?)
+;; (s/def ::template-data
+;;   (s/keys :req-un [::hyphenated-name ::name ::ns ::path ::project-name]))
 
 ;; -----------------------------------------------------------------------------
 ;; Implementation
@@ -44,10 +44,10 @@
   [s]
   (str/replace s #"/" "-"))
 
-(s/fdef hyphenated-name
-  :args (s/cat :s string?)
-  :fn #(not (str/includes? (:ret %) "/"))
-  :ret ::hyphenated-name)
+;; (s/fdef hyphenated-name
+;;   :args (s/cat :s string?)
+;;   :fn #(not (str/includes? (:ret %) "/"))
+;;   :ret ::hyphenated-name)
 
 (def ^:private render
   (tmpl/renderer "jcf"))
@@ -63,17 +63,17 @@
        (map (juxt #(.replace ^String % "jcf" "{{path}}") identity))
        (into {})))
 
-(s/fdef expand-paths
-  :args (s/cat :paths ::templates)
-  :ret ::template-map)
+;; (s/fdef expand-paths
+;;   :args (s/cat :paths ::templates)
+;;   :ret ::template-map)
 
 (defn get-manifest
   [paths]
   (assoc (expand-paths paths) ".gitignore" "gitignore"))
 
-(s/fdef get-manifest
-  :args (s/cat :paths ::templates)
-  :ret ::template-map)
+;; (s/fdef get-manifest
+;;   :args (s/cat :paths ::templates)
+;;   :ret ::template-map)
 
 ;; NOTE Do not spec `render-files`.
 ;;
@@ -95,9 +95,9 @@
    :path (tmpl/name-to-path named)
    :project-name (tmpl/project-name named)})
 
-(s/fdef name->data
-  :args (s/cat :named ::name)
-  :ret ::template-data)
+;; (s/fdef name->data
+;;   :args (s/cat :named ::name)
+;;   :ret ::template-data)
 
 ;; NOTE Do not spec `jcf`.
 ;;

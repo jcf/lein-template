@@ -1,6 +1,6 @@
 (ns jcf.template-test
   (:require [clojure
-             [spec :as s]
+             ;; [spec :as s]
              [string :as str]
              [test :refer :all]]
             [clojure.java.io :as io]
@@ -10,7 +10,7 @@
             [clojure.data :as data])
   (:import java.io.File))
 
-(use-fixtures :once (fn [f] (s/instrument-all) (f)))
+;; (use-fixtures :once (fn [f] (s/instrument-all) (f)))
 
 ;; -----------------------------------------------------------------------------
 ;; Utils

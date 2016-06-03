@@ -9,5 +9,4 @@
   {:dev
    {:dependencies [[leiningen "2.5.1"]
                    [me.raynes/fs "1.4.6"]
-                   [org.clojure/clojure "1.9.0-alpha4"]
                    [org.clojure/test.check "0.9.0"]]}})
