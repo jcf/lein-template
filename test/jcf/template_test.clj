@@ -1,6 +1,16 @@
 (ns jcf.template-test
-  (:require [clojure.test :refer :all]
-            [leiningen.new.jcf :as sut]))
+  (:require [clojure
+             [spec :as s]
+             [string :as str]
+             [test :refer :all]]
+            [clojure.java.io :as io]
+            [leiningen.new.jcf :as sut]
+            [me.raynes.fs :as fs :refer [*cwd*]]
+            [clojure.set :as set]
+            [clojure.data :as data])
+  (:import java.io.File))
+
+(use-fixtures :once (fn [f] (s/instrument-all) (f)))
 
 ;; -----------------------------------------------------------------------------
 ;; Utils
@@ -15,24 +25,14 @@
   [dep]
   (-> dep first str))
 
+(defn- str-remove-prefix
+  [prefix s]
+  (if (str/starts-with? s prefix)
+    (subs s (count prefix))
+    s))
+
 ;; -----------------------------------------------------------------------------
 ;; Fixtures
-
-(def ^:private expected-manifest
-  [".gitignore"
-   "dev/user.clj"
-   "project.clj"
-   "resources/config.edn"
-   "src/{{path}}/common.clj"
-   "src/{{path}}/http_client.clj"
-   "src/{{path}}/logger.clj"
-   "src/{{path}}/main.clj"
-   "src/{{path}}/mime.clj"
-   "system.properties"
-   "test/{{path}}/common_test.clj"
-   "test/{{path}}/http_client_test.clj"
-   "test/{{path}}/mime_test.clj"
-   "test/{{path}}/test/util.clj"])
 
 (def manifest
   (sut/render-files (sut/get-manifest sut/clojurish-templates)
@@ -76,7 +76,27 @@
      :project-name "app"}))
 
 (deftest test-render-files
-  (is (= (-> manifest keys sort) expected-manifest)))
+  (let [files (->> "leiningen/new/jcf" io/resource io/file file-seq)
+        manifest (-> manifest keys set)
+        expected-manifest
+        (->> files
+             (remove (fn [^java.io.File file]
+                       (or (.isDirectory file)
+                           (#{".DS_Store" "gitignore"} (.getName file)))))
+             (map (fn [^java.io.File file]
+                    (str-remove-prefix (str (.getPath ^java.io.File *cwd*)
+                                            "/resources/leiningen/new/jcf/")
+                                       (.getPath file))))
+             (map #(str/replace % #"jcf" "{{path}}"))
+             (cons ".gitignore")
+             set)]
+    (is (= expected-manifest manifest)
+        (let [[a b _] (data/diff expected-manifest manifest)]
+          (str/join
+           "\n\n"
+           (filter identity
+                   [(when a (str "Not in manifest:\n" a))
+                    (when b (str "Unexpected on manifest:\n" b))]))))))
 
 (deftest test-project-definition
   (let [[_ named version & kvs] (-> manifest (get "project.clj") read-string)
