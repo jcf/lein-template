@@ -3,6 +3,7 @@
             byte-streams
             [cheshire.core :as json]
             [clojure.core.match :refer [match]]
+            [clojure.spec :as s]
             [com.stuartsierra.component :as component]
             [manifold.deferred :as deferred]
             [ring.util
@@ -12,6 +13,36 @@
             [{{ns}}
              [common :as common]
              [mime :as mime]]))
+
+;; -----------------------------------------------------------------------------
+;; Spec
+
+(s/def ::body ::s/any)
+(s/def ::headers (s/map-of string? string?))
+(s/def ::response-time integer?)
+(s/def ::status (s/and integer? #(<= 200 % 599)))
+
+(s/def ::response
+  (s/keys :req-un [::body ::headers ::response-time ::status]))
+
+(s/def ::request-method
+  #{:connect :delete :get :head :options :patch :post :put :trace})
+
+(defn- http-url?
+  [^String s]
+  (let [uri (java.net.URI. s)]
+    (and (.getAuthority uri)
+         (#{"http" "https"} (.getScheme uri)))))
+
+(s/def ::url
+  (s/and string? http-url?))
+
+(s/def ::request-options
+  (s/keys :req-un [::request-method ::url]
+          :opt-un [::body ::middleware ::multipart ::pool]))
+
+;; -----------------------------------------------------------------------------
+;; Parse response
 
 (defn parse-response
   [response]
@@ -31,8 +62,16 @@
 
        :else identity))))
 
+(s/fdef parse-response
+  :args (s/cat :response ::response)
+  :ret ::response)
+
+;; -----------------------------------------------------------------------------
+;; IRequest
+
 (defprotocol IRequest
   (request [this options]))
+
 
 (defrecord HTTP [connection-timeout
                  pool-timeout
