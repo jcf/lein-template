@@ -26,8 +26,8 @@
   (-> dep first str))
 
 (defn- str-remove-prefix
-  [prefix s]
-  (if (str/starts-with? s prefix)
+  [^String prefix ^String s]
+  (if (.startsWith s prefix)
     (subs s (count prefix))
     s))
 
