@@ -12,6 +12,9 @@ export TEMPLATE_DIR="/tmp/jcf-$(date -u +"%Y%m%d%H%M%S" | tr -d "\n")"
 stage "Running \"lein test\"..."
 lein test
 
+stage "Running \"lein install\"..."
+lein install
+
 stage "Running \"lein new\"..."
 lein new jcf testing/things --to-dir "${TEMPLATE_DIR}"
 
