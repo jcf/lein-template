@@ -107,5 +107,4 @@
   (let [data (name->data named)
         files (get-manifest clojurish-templates)]
     (main/info (format "Generating %d files..." (count files)))
-    (main/info (str/join "\n" (sort (keys files))))
     (apply tmpl/->files data (render-files files data))))
