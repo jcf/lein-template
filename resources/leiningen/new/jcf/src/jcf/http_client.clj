@@ -8,7 +8,7 @@
             [ring.util
              [codec :as codec]
              [response :as response]]
-            [taoensso.timbre :as log]
+            [io.pedestal.log :as log]
             [{{ns}}
              [common :as common]
              [mime :as mime]]))
@@ -39,10 +39,10 @@
                  request-timeout]
   component/Lifecycle
   (start [c]
-    (log/info {:component :http :at :start})
+    (log/info :component :http :at :start)
     (assoc c :pool http/default-connection-pool))
   (stop [c]
-    (log/info {:component :http :at :stop})
+    (log/info :component :http :at :stop)
     c)
 
   IRequest

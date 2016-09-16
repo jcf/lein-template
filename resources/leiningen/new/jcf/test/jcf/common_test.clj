@@ -3,13 +3,14 @@
             [clojure
              [spec :as s]
              [test :refer :all]]
+            [clojure.spec.test :as spec.test]
             [clojure.test.check
              [clojure-test :refer [defspec]]
              [generators :as gen]
              [properties :as prop]]
             [{{ns}}.common :as sut]))
 
-(use-fixtures :once (fn [f] (s/instrument-all) (f)))
+(use-fixtures :once (fn [f] (spec.test/instrument) (f) (spec.test/unstrument)))
 
 ;; -----------------------------------------------------------------------------
 ;; ByteArrayInputStream

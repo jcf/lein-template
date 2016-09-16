@@ -3,8 +3,7 @@
             [com.stuartsierra.component :as component]
             [{{ns}}
              [http-client :as http-client]
-             [main :as main]]
-            [taoensso.timbre :as log]))
+             [main :as main]]))
 
 ;; -----------------------------------------------------------------------------
 ;; Component lifecycle

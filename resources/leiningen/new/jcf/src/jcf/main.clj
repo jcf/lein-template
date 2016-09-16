@@ -3,10 +3,8 @@
   (:require [aero.core :as aero]
             [clojure.java.io :as io]
             [com.stuartsierra.component :as component]
-            [taoensso.timbre :as log]
-            [{{ns}}
-             [http-client :as http-client]
-             [logger :as logger]]))
+            [io.pedestal.log :as log]
+            [{{ns}}.http-client :as http-client]))
 
 ;; -----------------------------------------------------------------------------
 ;; Configuration
@@ -29,8 +27,7 @@
 (defn- new-system-map
   []
   (component/system-map
-   :http (http-client/map->HTTP {})
-   :logger (logger/map->Logger {})))
+   :http-client (http-client/map->HTTP {})))
 
 (defn new-system
   ([]
@@ -43,11 +40,11 @@
   (Thread/setDefaultUncaughtExceptionHandler
    (reify Thread$UncaughtExceptionHandler
      (uncaughtException [_ thread exception]
-       (log/error {:thread (.getName thread) :exception exception}))))
+       (log/error :thread (.getName thread) :exception exception))))
 
   (if-let [k (get profiles profile)]
     (do
-      (log/info {:msg "System coming right up..." :profile k})
+      (log/info :msg "System coming right up..." :profile k)
       (component/start-system (new-system k)))
     (do
       (println

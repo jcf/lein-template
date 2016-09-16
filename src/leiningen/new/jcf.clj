@@ -29,9 +29,9 @@
   #{"dev/user.clj"
     "project.clj"
     "resources/config.edn"
+    "resources/logback.xml"
     "src/jcf/common.clj"
     "src/jcf/http_client.clj"
-    "src/jcf/logger.clj"
     "src/jcf/main.clj"
     "src/jcf/mime.clj"
     "system.properties"
@@ -40,17 +40,21 @@
     "test/jcf/http_client_test.clj"
     "test/jcf/test/util.clj"})
 
-(defn- hyphenated-name
-  [s]
-  (str/replace s #"/" "-"))
-
 ;; (s/fdef hyphenated-name
 ;;   :args (s/cat :s string?)
 ;;   :fn #(not (str/includes? (:ret %) "/"))
 ;;   :ret ::hyphenated-name)
 
+(defn- hyphenated-name
+  [s]
+  (str/replace s #"/" "-"))
+
 (def ^:private render
   (tmpl/renderer "jcf"))
+
+;; (s/fdef expand-paths
+;;   :args (s/cat :paths ::templates)
+;;   :ret ::template-map)
 
 (defn- expand-paths
   "Take a list of template paths, and expand them into a map of destination
@@ -63,17 +67,13 @@
        (map (juxt #(.replace ^String % "jcf" "{{path}}") identity))
        (into {})))
 
-;; (s/fdef expand-paths
+;; (s/fdef get-manifest
 ;;   :args (s/cat :paths ::templates)
 ;;   :ret ::template-map)
 
 (defn get-manifest
   [paths]
   (assoc (expand-paths paths) ".gitignore" "gitignore"))
-
-;; (s/fdef get-manifest
-;;   :args (s/cat :paths ::templates)
-;;   :ret ::template-map)
 
 ;; NOTE Do not spec `render-files`.
 ;;
@@ -87,6 +87,10 @@
   [files data]
   (reduce-kv #(assoc %1 %2 (render %3 data)) {} files))
 
+;; (s/fdef name->data
+;;   :args (s/cat :named ::name)
+;;   :ret ::template-data)
+
 (defn name->data
   [named]
   {:hyphenated-name (hyphenated-name named)
@@ -94,10 +98,6 @@
    :ns (tmpl/sanitize-ns named)
    :path (tmpl/name-to-path named)
    :project-name (tmpl/project-name named)})
-
-;; (s/fdef name->data
-;;   :args (s/cat :named ::name)
-;;   :ret ::template-data)
 
 ;; NOTE Do not spec `jcf`.
 ;;

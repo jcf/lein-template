@@ -11,15 +11,8 @@
 ;; -----------------------------------------------------------------------------
 ;; Spec
 
-(defn boolean?
-  [x]
-  (instance? Boolean x))
-
-(s/def ::boolean
-  (s/with-gen boolean? gen/boolean))
-
 (s/def ::any-map
-  (s/map-of (s/nilable ::s/any) (s/nilable ::s/any)))
+  (s/map-of (s/nilable any?) (s/nilable any?)))
 
 (s/def ::maybe-any-map
   (s/nilable ::any-map))
@@ -35,10 +28,14 @@
   #(convertible? % ByteArrayInputStream))
 
 (s/def ::kv
-  (s/tuple ::s/any ::s/any))
+  (s/tuple any? any?))
 
 ;; -----------------------------------------------------------------------------
 ;; ByteArrayInputStream
+
+(s/fdef bais
+  :args (s/cat :x ::baisable)
+  :ret ::bais)
 
 (defn bais
   [x]
@@ -47,10 +44,6 @@
   (-> x
       byte-streams/to-byte-array
       byte-streams/to-input-stream))
-
-(s/fdef bais
-  :args (s/cat :x ::baisable)
-  :ret ::bais)
 
 ;; -----------------------------------------------------------------------------
 ;; Walk map
@@ -65,7 +58,7 @@
 
 (s/fdef walk-map
   :args (s/cat :f (s/fspec
-                   :args (s/cat :kv (s/tuple ::s/any ::s/any))
+                   :args (s/cat :kv (s/tuple any? any?))
                    :ret ::kv)
                :m ::maybe-any-map)
   :ret ::any-map)
@@ -73,27 +66,35 @@
 ;; -----------------------------------------------------------------------------
 ;; Inflections
 
+(s/fdef inflectable?
+  :args (s/cat :x any?)
+  :ret boolean?)
+
 (defn inflectable?
   [x]
   (or (keyword? x)
       (string? x)
       (symbol? x)))
 
-(s/fdef inflectable?
-  :args (s/cat :x ::s/any)
-  :ret ::boolean)
-
 (defn- inflect
   [x f]
   (cond-> x (inflectable? x) f))
+
+(s/fdef string->keyword
+  :args (s/cat :s string?)
+  :ret keyword?)
 
 (defn string->keyword
   [s]
   (-> s infl/hyphenate keyword))
 
-(s/fdef string->keyword
-  :args (s/cat :s string?)
-  :ret keyword?)
+(s/fdef keyword->string
+  :args (s/cat :x any?)
+  :fn (fn [{:keys [args ret]}]
+        (if (-> args :x keyword?)
+          (string? ret)
+          (= (:x args) ret)))
+  :ret any?)
 
 (defn keyword->string
   [x]
@@ -103,13 +104,9 @@
          (str/join "/"))
     x))
 
-(s/fdef keyword->string
-  :args (s/cat :x ::s/any)
-  :fn (fn [{:keys [args ret]}]
-        (if (-> args :x keyword?)
-          (string? ret)
-          (= (:x args) ret)))
-  :ret ::s/any)
+(s/fdef underscore-keys
+  :args (s/cat :m ::maybe-any-map)
+  :ret ::any-map)
 
 (defn underscore-keys
   "Recursively transforms all map keys from hyphenated keywords, to underscored
@@ -118,9 +115,13 @@
   (walk-map
    (fn [[k v]] [(inflect k (comp infl/underscore keyword->string)) v]) m))
 
-(s/fdef underscore-keys
-  :args (s/cat :m ::maybe-any-map)
-  :ret ::any-map)
+(s/fdef hyphenated-keyword
+  :args (s/cat :x any?)
+  :fn (fn [{:keys [args ret]}]
+        (if (or (-> args :x keyword?) (-> args :x string?))
+          (keyword? ret)
+          (= (:x args) ret)))
+  :ret any?)
 
 (defn- hyphenated-keyword
   [x]
@@ -128,20 +129,12 @@
     (-> x keyword->string infl/hyphenate keyword)
     x))
 
-(s/fdef hyphenated-keyword
-  :args (s/cat :x ::s/any)
-  :fn (fn [{:keys [args ret]}]
-        (if (or (-> args :x keyword?) (-> args :x string?))
-          (keyword? ret)
-          (= (:x args) ret)))
-  :ret ::s/any)
+(s/fdef hyphenate-keys
+  :args (s/cat :m ::maybe-any-map)
+  :ret ::any-map)
 
 (defn hyphenate-keys
   "Recursively transforms all map keys from underscored strings to hyphenated
   keywords."
   [m]
   (walk-map (fn [[k v]] [(inflect k hyphenated-keyword) v]) m))
-
-(s/fdef hyphenate-keys
-  :args (s/cat :m ::maybe-any-map)
-  :ret ::any-map)
