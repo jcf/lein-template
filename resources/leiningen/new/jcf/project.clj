@@ -1,7 +1,7 @@
 (defproject {{name}} "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "https://example.com/FIXME"
-  :dependencies [[aero "1.0.0"]
+  :dependencies [[aero "1.0.1"]
                  [aleph "0.4.2-alpha8"]
                  [ch.qos.logback/logback-classic "1.1.7"
                   :exclusions [org.slf4j/slf4j-api]]
@@ -12,7 +12,7 @@
                  [io.pedestal/pedestal.log "0.5.1"]
                  [medley "0.8.3"]
                  [org.clojure/clojure "1.9.0-alpha12"]
-                 [org.clojure/core.async "0.2.391"
+                 [org.clojure/core.async "0.2.395"
                   :exclusions [org.clojure/tools.reader]]
                  [org.clojure/core.match "0.3.0-alpha4"]
                  [org.slf4j/jcl-over-slf4j "1.7.21"]
