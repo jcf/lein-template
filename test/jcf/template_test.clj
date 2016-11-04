@@ -1,29 +1,52 @@
 (ns jcf.template-test
-  (:require [clojure.test :refer :all]
-            [leiningen.new.jcf :refer :all]
-            [schema.test :refer [validate-schemas]]))
+  (:require [clojure
+             ;; [spec :as s]
+             [string :as str]
+             [test :refer :all]]
+            [clojure.java.io :as io]
+            [leiningen.new.jcf :as sut]
+            [me.raynes.fs :as fs :refer [*cwd*]]
+            [clojure.set :as set]
+            [clojure.data :as data])
+  (:import java.io.File))
 
-(use-fixtures :once validate-schemas)
+;; (use-fixtures :once (fn [f] (s/instrument-all) (f)))
 
-(def ^:private expected-manifest
-  [".gitignore"
-   "dev/user.clj"
-   "project.clj"
-   "src/{{path}}/config.clj"
-   "src/{{path}}/main.clj"
-   "system.properties"
-   "test/{{path}}/config_test.clj"])
+;; -----------------------------------------------------------------------------
+;; Utils
+
+(defmacro ^:private is-ordered
+  "Naive ordered check that is extremely inefficient, but that supports
+  comparing any sortable."
+  [coll]
+  `(is (= ~coll (sort ~coll))))
+
+(defn- dep-name
+  [dep]
+  (-> dep first str))
+
+(defn- str-remove-prefix
+  [^String prefix ^String s]
+  (if (.startsWith s prefix)
+    (subs s (count prefix))
+    s))
+
+;; -----------------------------------------------------------------------------
+;; Fixtures
 
 (def manifest
-  (render-files (get-manifest clojurish-templates)
-                {:name "example/app"
-                 :ns "example.app"
-                 :path "example/app"
-                 :project-name "app"
-                 :hyphenated-name "example-app"}))
+  (sut/render-files (sut/get-manifest sut/clojurish-templates)
+                    {:name "example/app"
+                     :ns "example.app"
+                     :path "example/app"
+                     :project-name "app"
+                     :hyphenated-name "example-app"}))
+
+;; -----------------------------------------------------------------------------
+;; Tests
 
 (deftest test-name->data
-  (are [in out] (= (name->data in) out)
+  (are [in out] (= (sut/name->data in) out)
     "foo"
     {:hyphenated-name "foo"
      :name "foo"
@@ -53,7 +76,27 @@
      :project-name "app"}))
 
 (deftest test-render-files
-  (is (= (-> manifest keys sort) expected-manifest)))
+  (let [files (->> "leiningen/new/jcf" io/resource io/file file-seq)
+        manifest (-> manifest keys set)
+        expected-manifest
+        (->> files
+             (remove (fn [^java.io.File file]
+                       (or (.isDirectory file)
+                           (#{".DS_Store" "gitignore"} (.getName file)))))
+             (map (fn [^java.io.File file]
+                    (str-remove-prefix (str (.getPath ^java.io.File *cwd*)
+                                            "/resources/leiningen/new/jcf/")
+                                       (.getPath file))))
+             (map #(str/replace % #"jcf" "{{path}}"))
+             (cons ".gitignore")
+             set)]
+    (is (= expected-manifest manifest)
+        (let [[a b _] (data/diff expected-manifest manifest)]
+          (str/join
+           "\n\n"
+           (filter identity
+                   [(when a (str "Not in manifest:\n" a))
+                    (when b (str "Unexpected on manifest:\n" b))]))))))
 
 (deftest test-project-definition
   (let [[_ named version & kvs] (-> manifest (get "project.clj") read-string)
@@ -62,11 +105,5 @@
     (is (= version "0.1.0-SNAPSHOT"))
     (is (= (:repl-options props) '{:init-ns user}))
     (is (= (:uberjar-name props) "example-app-standalone.jar"))
-    (is (= (:dependencies props)
-           '[[com.stuartsierra/component "0.3.1"]
-             [environ "1.0.2"]
-             [org.clojure/clojure "1.8.0"]
-             [prismatic/schema "1.0.5"]]))
-    (is (= (get-in props [:profiles :dev :dependencies])
-           '[[org.clojure/tools.namespace "0.2.10"]
-             [reloaded.repl "0.2.1"]]))))
+    (is-ordered (map dep-name (:dependencies props)))
+    (is-ordered (map dep-name (get-in props [:profiles :dev :dependencies])))))

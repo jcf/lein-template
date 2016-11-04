@@ -2,15 +2,16 @@
 set -e
 
 stage() {
-  echo
-  echo -e "\033[34;1m=>\033[0m $@"
-  echo
+  printf "\033[34;1m==>\033[0;1m %s\033[0m\n" "$@"
 }
 
 export TEMPLATE_DIR="/tmp/jcf-$(date -u +"%Y%m%d%H%M%S" | tr -d "\n")"
 
 stage "Running \"lein test\"..."
 lein test
+
+stage "Running \"lein install\"..."
+lein install
 
 stage "Running \"lein new\"..."
 lein new jcf testing/things --to-dir "${TEMPLATE_DIR}"
